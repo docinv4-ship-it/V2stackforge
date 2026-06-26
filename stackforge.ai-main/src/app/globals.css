@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-background: #fafafa;
+  --color-foreground: #27272a;
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-space-grotesk);
+}
+
+:root {
+  --background: #fafafa;
+  --foreground: #27272a;
+  --card: #ffffff;
+  --card-foreground: #27272a;
+}
+
+/* 1. Body se !important hataya taake colors override ho sakein */
+body {
+  background: #fafafa;
+  color: #27272a;
+}
+
+/* 2. Headings se !important hata diya. Ab ye wahi color lenge jo aap components mein denge */
+h1, h2, h3, h4 {
+  font-family: 'Playfair Display', serif;
+}
+
+/* 3. Utilities se bhi !important remove kiya */
+@layer utilities {
+  .glass { 
+    background: #ffffff; 
+    border: 1px solid #e5e7eb; 
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #f4f4f5; }
+::-webkit-scrollbar-thumb { background: #d4d4d8; border-radius: 4px; }
