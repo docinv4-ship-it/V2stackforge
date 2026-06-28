@@ -3,7 +3,6 @@ import "server-only";
 import { randomBytes } from "node:crypto";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { getToolBySlug } from "@/lib/tools/get-tool";
-import type { Tool } from "@/lib/types";
 
 export type ToolOwnerRole = "owner" | "admin" | "editor";
 export type ToolOwnerStatus = "pending" | "approved" | "rejected";
@@ -558,7 +557,7 @@ export async function verifyOwnershipEmail(token: string): Promise<ToolOwnership
     throw new Error("Verification link is invalid");
   }
 
-  const claim = row as ToolOwnershipRow;
+  let claim = row as ToolOwnershipRow;
 
   if (claim.verification_token_expires_at) {
     const expiry = new Date(claim.verification_token_expires_at).getTime();
