@@ -11,7 +11,7 @@ import { ToolDetailContent } from "./content";
 import { Button } from "@/components/ui/button";
 import type { Tool } from "@/lib/types";
 import { getToolBySlug } from "@/lib/tools/get-tool";
-import { VendorStatusCard } from "@/components/tool-owner/VendorStatusCard";
+import { checkToolOwnership } from "@/lib/tool-owner";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -91,19 +91,32 @@ export default async function ToolDetailPage({ params }: PageProps) {
   }
 
   const tutorials: EcosystemTutorial[] = ecosystem?.tutorials ?? [];
+  const ownership = await checkToolOwnership({ toolSlug: tool.slug });
+  const isOwnershipTaken = (ownership.rows?.length ?? 0) > 0;
 
   return (
     <div className="relative min-h-screen w-full space-y-0 overflow-hidden bg-zinc-950 text-zinc-100 selection:bg-zinc-800">
-      <div className="absolute left-1/2 top-0 z-0 h-[600px] w-full max-w-7xl -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-zinc-900/50 via-zinc-950/20 to-transparent blur-3xl pointer-events-none" />
-      <div className="absolute inset-0 z-0 bg-[linear-gradient(to_right,#1f1f23_1px,transparent_1px),linear-gradient(to_bottom,#1f1f23_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-25 pointer-events-none" />
+      <div className="pointer-events-none absolute left-1/2 top-0 z-0 h-[600px] w-full max-w-7xl -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-zinc-900/50 via-zinc-950/20 to-transparent blur-3xl" />
+      <div className="pointer-events-none absolute inset-0 z-0 bg-[linear-gradient(to_right,#1f1f23_1px,transparent_1px),linear-gradient(to_bottom,#1f1f23_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-25" />
 
       <div className="relative z-10 m-0 block w-full p-0 clear-both">
         <ToolDetailContent tool={tool} />
       </div>
 
-      <section className="relative z-10 w-full border-t border-zinc-900/80 bg-zinc-950/95 py-8">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <VendorStatusCard tool={tool} />
+      <section className="relative z-10 w-full border-y border-zinc-900/80 bg-zinc-950/95">
+        <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
+          {isOwnershipTaken ? (
+            <div className="flex w-full items-center justify-center rounded-md border border-zinc-800 bg-zinc-900 px-4 py-2 text-sm font-semibold text-zinc-400">
+              Ownership Taken
+            </div>
+          ) : (
+            <Link
+              href={`/company/claim/${tool.slug}`}
+              className="flex w-full items-center justify-center rounded-md border border-zinc-700 bg-zinc-100 px-4 py-2 text-sm font-semibold text-zinc-950 transition hover:bg-white"
+            >
+              Claim Ownership
+            </Link>
+          )}
         </div>
       </section>
 
