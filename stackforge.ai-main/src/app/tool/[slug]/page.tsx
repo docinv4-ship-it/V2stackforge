@@ -11,7 +11,7 @@ import { ToolDetailContent } from "./content";
 import { Button } from "@/components/ui/button";
 import type { Tool } from "@/lib/types";
 import { getToolBySlug } from "@/lib/tools/get-tool";
-import { ClaimButton } from "@/components/tool-owner/ClaimButton";
+import { VendorStatusCard } from "@/components/tool-owner/VendorStatusCard";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -93,45 +93,25 @@ export default async function ToolDetailPage({ params }: PageProps) {
   const tutorials: EcosystemTutorial[] = ecosystem?.tutorials ?? [];
 
   return (
-    <div className="w-full bg-zinc-950 text-zinc-100 min-h-screen relative overflow-hidden space-y-0 block clear-both selection:bg-zinc-800">
-      {/* Premium Minimalist Mesh Overlays */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[600px] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-zinc-900/50 via-zinc-950/20 to-transparent blur-3xl pointer-events-none z-0" />
-      <div className="absolute top-0 inset-0 bg-[linear-gradient(to_right,#1f1f23_1px,transparent_1px),linear-gradient(to_bottom,#1f1f23_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-25 pointer-events-none z-0" />
+    <div className="relative min-h-screen w-full space-y-0 overflow-hidden bg-zinc-950 text-zinc-100 selection:bg-zinc-800">
+      <div className="absolute left-1/2 top-0 z-0 h-[600px] w-full max-w-7xl -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-zinc-900/50 via-zinc-950/20 to-transparent blur-3xl pointer-events-none" />
+      <div className="absolute inset-0 z-0 bg-[linear-gradient(to_right,#1f1f23_1px,transparent_1px),linear-gradient(to_bottom,#1f1f23_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-25 pointer-events-none" />
 
-      {/* Main Core Render - Pulls content wrapper exactly once */}
-      <div className="w-full block clear-both m-0 p-0 relative z-10">
+      <div className="relative z-10 m-0 block w-full p-0 clear-both">
         <ToolDetailContent tool={tool} />
       </div>
 
-      {/* Ownership CTA */}
-      <section className="relative z-10 w-full border-t border-zinc-900/80 bg-zinc-950/90 py-6">
+      <section className="relative z-10 w-full border-t border-zinc-900/80 bg-zinc-950/95 py-8">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col gap-3 rounded-2xl border border-zinc-800 bg-zinc-900/40 p-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-zinc-500">
-                Vendor Ownership
-              </p>
-              <p className="mt-1 text-sm text-zinc-300">
-                Own this profile, verify your company, and manage updates from one dashboard.
-              </p>
-            </div>
-
-            <ClaimButton
-              toolSlug={tool.slug}
-              toolId={tool.id}
-              toolName={tool.name}
-              website={tool.website}
-            />
-          </div>
+          <VendorStatusCard tool={tool} />
         </div>
       </section>
 
-      {/* Lower dynamic tutorials segment mapped accurately */}
       {tutorials.length > 0 && (
-        <section className="border-t border-zinc-900 bg-zinc-950/80 relative z-10 py-16 lg:py-20 w-full block">
+        <section className="relative z-10 w-full border-t border-zinc-900 bg-zinc-950/80 py-16 lg:py-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="mb-12 max-w-3xl">
-              <div className="mb-4 inline-flex items-center gap-x-2 bg-zinc-900 border border-zinc-800 px-3 py-1 rounded-xl text-[11px] font-bold tracking-wide uppercase text-zinc-400 font-mono">
+              <div className="mb-4 inline-flex items-center gap-x-2 rounded-xl border border-zinc-800 bg-zinc-900 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-zinc-400 font-mono">
                 <BookOpen className="h-3.5 w-3.5 text-zinc-500" />
                 <span>Knowledge Base</span>
               </div>
@@ -147,21 +127,21 @@ export default async function ToolDetailPage({ params }: PageProps) {
               {tutorials.map((tutorial) => (
                 <article
                   key={tutorial.slug}
-                  className="flex flex-col justify-between items-start w-full bg-zinc-900/20 border border-zinc-900/50 rounded-2xl p-6 hover:border-zinc-800/80 transition-all duration-200"
+                  className="flex w-full flex-col items-start justify-between rounded-2xl border border-zinc-900/50 bg-zinc-900/20 p-6 transition-all duration-200 hover:border-zinc-800/80"
                 >
                   <div className="w-full">
-                    <h3 className="mb-3 text-lg font-bold text-zinc-50 tracking-tight">
+                    <h3 className="mb-3 text-lg font-bold tracking-tight text-zinc-50">
                       {tutorial.title}
                     </h3>
 
                     {tutorial.summary ? (
-                      <p className="text-sm leading-relaxed text-zinc-400 font-normal mb-5">
+                      <p className="mb-5 text-sm leading-relaxed font-normal text-zinc-400">
                         {tutorial.summary}
                       </p>
                     ) : null}
 
                     {tutorial.intent ? (
-                      <div className="mb-6 inline-block rounded-md bg-zinc-900 border border-zinc-800 px-2 py-0.5 text-[11px] font-medium text-zinc-400 font-mono">
+                      <div className="mb-6 inline-block rounded-md border border-zinc-800 bg-zinc-900 px-2 py-0.5 font-mono text-[11px] font-medium text-zinc-400">
                         {tutorial.intent}
                       </div>
                     ) : null}
@@ -177,7 +157,7 @@ export default async function ToolDetailPage({ params }: PageProps) {
                               key={`${tutorial.slug}-step-${index}`}
                               className="flex items-start gap-3 text-sm text-zinc-400"
                             >
-                              <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-900 text-[10px] font-bold text-zinc-300 mt-0.5 font-mono">
+                              <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-900 text-[10px] font-bold text-zinc-300 font-mono">
                                 {index + 1}
                               </span>
                               <span className="leading-relaxed">{step}</span>
@@ -196,7 +176,7 @@ export default async function ToolDetailPage({ params }: PageProps) {
                           {tutorial.tips.map((tip, index) => (
                             <li
                               key={`${tutorial.slug}-tip-${index}`}
-                              className="text-sm leading-relaxed text-zinc-400 pl-2 border-l-2 border-zinc-800"
+                              className="border-l-2 border-zinc-800 pl-2 text-sm leading-relaxed text-zinc-400"
                             >
                               {tip}
                             </li>
@@ -209,7 +189,7 @@ export default async function ToolDetailPage({ params }: PageProps) {
                   {tutorial.cta ? (
                     <Button
                       variant="primary"
-                      className="h-10 rounded-xl bg-zinc-100 text-zinc-950 hover:bg-zinc-200 transition-all px-5 mt-4 text-xs font-mono font-bold tracking-wide uppercase border-transparent shadow-sm inline-flex items-center"
+                      className="mt-4 inline-flex h-10 items-center rounded-xl border-transparent bg-zinc-100 px-5 text-xs font-mono font-bold tracking-wide text-zinc-950 shadow-sm transition-all hover:bg-zinc-200"
                       asChild
                     >
                       <Link href={tutorial.cta.href}>
