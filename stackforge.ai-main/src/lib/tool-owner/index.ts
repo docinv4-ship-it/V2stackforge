@@ -57,6 +57,26 @@ export type ToolOwnershipRow = {
 
 let cachedAdminClient: SupabaseClient | null = null;
 
+// Testing phase only.
+// Gmail/Yahoo/etc. allowed when this is true.
+// Production mein isko false kar dena.
+const ALLOW_PERSONAL_EMAILS = true;
+
+const PERSONAL_EMAIL_DOMAINS = new Set([
+  "gmail.com",
+  "yahoo.com",
+  "hotmail.com",
+  "outlook.com",
+  "icloud.com",
+  "proton.me",
+  "protonmail.com",
+  "live.com",
+  "aol.com",
+  "mail.com",
+  "zoho.com",
+  "gmx.com",
+]);
+
 function normalizeText(value: unknown): string {
   if (value === null || value === undefined) return "";
   return String(value).replace(/\s+/g, " ").trim();
@@ -94,6 +114,24 @@ function getSiteUrl(): string {
 
 function generateToken(bytes = 32): string {
   return randomBytes(bytes).toString("hex");
+}
+
+function isPersonalEmailDomain(domain: string): boolean {
+  const normalized = normalizeText(domain).toLowerCase();
+  return PERSONAL_EMAIL_DOMAINS.has(normalized);
+}
+
+function validateEmailPolicy(companyEmail: string): void {
+  const email = normalizeText(companyEmail).toLowerCase();
+  const domain = normalizeDomain(email);
+
+  if (!email || !email.includes("@")) {
+    throw new Error("A valid company email is required");
+  }
+
+  if (!ALLOW_PERSONAL_EMAILS && isPersonalEmailDomain(domain)) {
+    throw new Error("Please use your official company work email address.");
+  }
 }
 
 export function getAdminSupabaseClient(): SupabaseClient {
@@ -463,9 +501,7 @@ export async function claimToolOwnership(input: {
     throw new Error("Job title is required");
   }
 
-  if (!companyEmail || !companyEmail.includes("@")) {
-    throw new Error("A valid company email is required");
-  }
+  validateEmailPolicy(companyEmail);
 
   const approvedClaim = await getExistingApprovedClaim(tool.slug);
   if (approvedClaim) {
